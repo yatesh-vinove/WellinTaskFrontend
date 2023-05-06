@@ -66,7 +66,6 @@ export default function SignIn() {
                   placeholder="User name"
                   {...register("username", {
                     required: "Username is required",
-                    minLength: 5,
                   })}
                 />
                 {errors.username && (
@@ -83,7 +82,6 @@ export default function SignIn() {
                   placeholder="Password"
                   {...register("password", {
                     required: "Pasword is Required",
-                    minLength: 7,
                   })}
                 />
                 {errors.password && (

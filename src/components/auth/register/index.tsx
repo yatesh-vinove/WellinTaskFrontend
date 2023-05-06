@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "../login/index";
 import { useForm } from "react-hook-form";
 import routeNames from "../../../routes/routeNames";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 interface ISigninPayload {
   username: string;
@@ -11,12 +13,29 @@ interface ISigninPayload {
 
 export default function SignIn() {
   const navigate = useNavigate();
+
+  const validationSchema = yup.object({
+    username: yup
+      .string()
+      .required("Username is Required")
+      .min(6, "Username should be 6 characters long"),
+    password: yup
+      .string()
+      .required("Password is Required")
+      .min(8, "Password should be atleast 8 characters")
+      .matches(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/,
+        "Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, and 1 special character"
+      ),
+  });
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<ISigninPayload>();
+    reset,
+  } = useForm<ISigninPayload>({ resolver: yupResolver(validationSchema) });
 
   const handleSubmitData = async (data: ISigninPayload) => {
     try {
@@ -57,10 +76,7 @@ export default function SignIn() {
                   type="text"
                   className="login__input"
                   placeholder="User name"
-                  {...register("username", {
-                    required: "Username is required",
-                    minLength: 5,
-                  })}
+                  {...register("username")}
                 />
                 {errors.username && (
                   <span style={{ color: "red" }}>
@@ -74,10 +90,7 @@ export default function SignIn() {
                   type="password"
                   className="login__input"
                   placeholder="Password"
-                  {...register("password", {
-                    required: "Pasword is Required",
-                    minLength: 7,
-                  })}
+                  {...register("password")}
                 />
                 {errors.password && (
                   <span style={{ color: "red" }}>
